@@ -11,3 +11,7 @@ ext {
 dependencies {
     compile supportLibraryDependency
 }
+
+android {
+    buildToolsVersion '25.0.0'
+}

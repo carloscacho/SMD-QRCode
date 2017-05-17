@@ -13,3 +13,7 @@ dependencies {
     compile 'me.dm7.barcodescanner:core:1.9'
     compile fileTree(dir: 'libs', include: '*.jar')
 }
+
+android {
+    buildToolsVersion '25.0.0'
+}

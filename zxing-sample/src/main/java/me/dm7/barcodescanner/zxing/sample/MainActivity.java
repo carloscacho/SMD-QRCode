@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import me.dm7.barcodescanner.zxing.sample.controller.DataBaseController;
+import me.dm7.barcodescanner.zxing.sample.controller.ClientController;
 import me.dm7.barcodescanner.zxing.sample.controller.behavior.AdapterVoucher;
 import me.dm7.barcodescanner.zxing.sample.model.ListItemClientCompany;
 
@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     //List de Voucher
     private RecyclerView lstVoucherIn;
     private ArrayList<ListItemClientCompany> arrayVoucherIn;
-    private DataBaseController voucher;
+    private ClientController ClientVouchers;
 
     @Override
     public void onCreate(Bundle state) {
@@ -39,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
         arrayVoucherIn = new ArrayList<>();
 
         //create baseData
-        voucher = DataBaseController.getInstance(this);
+        ClientVouchers = new ClientController(this);
+        ClientVouchers.getDbController().insertElementsTest(this);
 
         //Define layout of Recycle View
         RecyclerView.LayoutManager layout = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -51,8 +52,9 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         //get all elements in the Data Base
-       // voucher.insertElementsTest();
-        arrayVoucherIn = voucher.getArrayVoucher(this);
+
+        arrayVoucherIn = ClientVouchers.getDbController().getArrayVoucher(this);
+
 
         //load all voucher-in in list
         lstVoucherIn.setAdapter(new AdapterVoucher(arrayVoucherIn, this));

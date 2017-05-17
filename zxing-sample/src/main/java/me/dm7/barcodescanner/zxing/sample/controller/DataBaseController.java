@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -76,7 +77,8 @@ public class DataBaseController {
         ArrayList<ListItemClientCompany> stringArrayAdapter = new ArrayList<>();
         ListItemClientCompany item;
         //get All voucher Checked
-        Cursor cs = connDataBase.query("VOUCHERIN",null,null,null,null,null,null);
+        Cursor cs = getInstance(context).getConnDataBase().query("VOUCHER",null,null,null,null,null,null);
+
 
         if(cs.getCount() > 0) {
             cs.moveToFirst();
@@ -104,17 +106,21 @@ public class DataBaseController {
     public void insertElementsVoucherIn(String voucher){
         Log.i("Voucher", voucher);
         ContentValues contValue = new ContentValues();
-        contValue.put("VoNumber", voucher);
-        connDataBase.insertOrThrow("VOUCHERIN", null, contValue);
+        contValue.put("VoucherNumber", voucher);
+        connDataBase.insertOrThrow("VOUCHER", null, contValue);
 
     }
 
-    public void insertElementsTest(){
-
-        for (int i = 0; i < 30; i++) {
-            ContentValues contValue = new ContentValues();
-            contValue.put("VoNumber", "Number text"  + i);
-            connDataBase.insertOrThrow("VOUCHERIN", null, contValue);
+    public void insertElementsTest(Context context){
+        try {
+            for (int i = 0; i < 30; i++) {
+                ContentValues contValue = new ContentValues();
+                contValue.put("VoucherNumber", i);
+                getInstance(context).getConnDataBase().insertOrThrow("VOUCHER",null,contValue);
+            }
+        }catch (SQLException e){
+            Log.e("DataBase", e.getMessage());
+            e.printStackTrace();
         }
 
     }

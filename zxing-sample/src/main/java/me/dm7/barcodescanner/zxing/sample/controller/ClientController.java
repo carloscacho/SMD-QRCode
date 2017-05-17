@@ -30,8 +30,8 @@ public class ClientController {
      * @param context
      */
     public ClientController(Context context) {
-        clients = new ArrayList<>();
-        courses = new ArrayList<>();
+        setClients(new ArrayList<ClientCompany>());
+        setCourses(new ArrayList<Course>());
         dbController = DataBaseController.getInstance(context);
     }
 
@@ -45,8 +45,8 @@ public class ClientController {
     public boolean addClient(int id, String ClientName, int ClientCT){
         ClientCompany client = new ClientCompany(ClientName, ClientCT);
         client.setIdCompany(id);
-        if(!clients.contains(client))
-            clients.add(client);
+        if(!getClients().contains(client))
+            getClients().add(client);
         else
             return false;
         return true;
@@ -57,7 +57,7 @@ public class ClientController {
      * Get all elements in BD put in Array of Client Company
      */
     public void preloadClients(){
-        Cursor cs = dbController.getConnDataBase().query("CLIENT_COMPANY",null,null,null,null,null,null);
+        Cursor cs = getDbController().getConnDataBase().query("CLIENT_COMPANY",null,null,null,null,null,null);
 
         if(cs.getCount() > 0) {
             cs.moveToFirst();
@@ -91,8 +91,8 @@ public class ClientController {
      */
     public boolean addCourse(Course course){
 
-        if(!courses.contains(course))
-            courses.add(course);
+        if(!getCourses().contains(course))
+            getCourses().add(course);
         else
             return false;
         return true;
@@ -103,7 +103,7 @@ public class ClientController {
      * Get all elements in BD put in Array of Client Company
      */
     public void preloadCourse(){
-        Cursor cs = dbController.getConnDataBase().query("COURSE",null,null,null,null,null,null);
+        Cursor cs = getDbController().getConnDataBase().query("COURSE",null,null,null,null,null,null);
 
         if(cs.getCount() > 0) {
             cs.moveToFirst();
@@ -139,7 +139,7 @@ public class ClientController {
     //===================================================
 
     public void preLoadVoucher(){
-        Cursor cs = dbController.getConnDataBase().query("VOUCHER",null,null,null,null,null,null);
+        Cursor cs = getDbController().getConnDataBase().query("VOUCHER",null,null,null,null,null,null);
 
         if(cs.getCount() > 0) {
             cs.moveToFirst();
@@ -163,7 +163,7 @@ public class ClientController {
 
 
     private void addVoucher(int idCourse, int idClient, int voucherN, int status, int extra) {
-        Cursor cs = dbController.getConnDataBase().query("COURSE",null,idCourse + " = _id",null,null,null,null);
+        Cursor cs = getDbController().getConnDataBase().query("COURSE",null,idCourse + " = _id",null,null,null,null);
 
         Course link = createCourse(cs);
 
@@ -172,15 +172,15 @@ public class ClientController {
         voucher.setExtra(extra != 0);
         voucher.setChecked(status != 0);
 
-        for (int i = 0; i < clients.size(); i++) {
-            if(clients.get(i).getIdCompany() == idClient){
+        for (int i = 0; i < getClients().size(); i++) {
+            if(getClients().get(i).getIdCompany() == idClient){
                 int key = Integer.parseInt(link.getDateCourse());
-                if(!clients.get(i).getListOfReservation().containsKey(key)) {
-                    clients.get(i).getListOfReservation().put(key, new ReservationMonth(key));
-                    clients.get(i).getListOfReservation().get(key).getReservedCourses().add(voucher);
+                if(!getClients().get(i).getListOfReservation().containsKey(key)) {
+                    getClients().get(i).getListOfReservation().put(key, new ReservationMonth(key));
+                    getClients().get(i).getListOfReservation().get(key).getReservedCourses().add(voucher);
                 }
                 else {
-                    clients.get(i).getListOfReservation().get(key).getReservedCourses().add(voucher);
+                    getClients().get(i).getListOfReservation().get(key).getReservedCourses().add(voucher);
                 }
             }
         }
@@ -191,13 +191,34 @@ public class ClientController {
      * @param context of create connection
      * @return object copy of
      */
-    public ClientController loadClientController(Context context){
-        ClientController clients = new ClientController(context);
-        clients.preloadClients();
-        clients.preloadCourse();
-        clients.preLoadVoucher();
+    public void loadClientController(Context context){
 
+        this.preloadClients();
+        this.preloadCourse();
+        this.preLoadVoucher();
+
+
+    }
+
+
+    public DataBaseController getDbController() {
+        return dbController;
+    }
+
+
+    public ArrayList<ClientCompany> getClients() {
         return clients;
     }
 
+    public void setClients(ArrayList<ClientCompany> clients) {
+        this.clients = clients;
+    }
+
+    public ArrayList<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(ArrayList<Course> courses) {
+        this.courses = courses;
+    }
 }
